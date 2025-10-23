@@ -56,6 +56,12 @@ All colors MUST be HSL.
 
     /* Animations */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Shadows */
+    --shadow-glow-normal: 0 0 30px hsl(200 90% 50% / 0.3);
+    --shadow-glow-warm: 0 0 30px hsl(35 95% 55% / 0.3);
+    --shadow-glow-hot: 0 0 30px hsl(0 85% 60% / 0.3);
+    --shadow-glow-dangerous: 0 0 30px hsl(340 85% 50% / 0.3);
 
     --sidebar-background: 0 0% 98%;
 

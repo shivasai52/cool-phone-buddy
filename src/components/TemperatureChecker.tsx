@@ -268,43 +268,64 @@ export default function TemperatureChecker() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
+      {/* Animated background orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-secondary/5 rounded-full blur-3xl animate-float" />
+      </div>
+
+      <div className="w-full max-w-md space-y-6 relative z-10">
         {/* Header */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-4">
           <div className="flex justify-center mb-4">
-            <div className="relative">
-              <Thermometer className="w-16 h-16 text-primary" strokeWidth={1.5} />
-              {status !== "none" && (
-                <div
-                  className="absolute -top-2 -right-2 text-3xl animate-bounce"
-                  style={{ animationDuration: "1s" }}
-                >
-                  {statusInfo?.emoji}
-                </div>
-              )}
+            <div className="relative animate-float">
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse-glow" />
+              <div className="relative bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-2xl border-2 border-primary/20">
+                <Thermometer 
+                  className="w-16 h-16 text-primary drop-shadow-lg" 
+                  strokeWidth={1.5} 
+                />
+                {status !== "none" && (
+                  <div
+                    className="absolute -top-2 -right-2 text-4xl animate-bounce drop-shadow-2xl"
+                    style={{ animationDuration: "1s" }}
+                  >
+                    {statusInfo?.emoji}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-foreground">Phone Temperature Checker</h1>
-          <p className="text-muted-foreground">
-            Check your phone's temperature and get helpful tips
-          </p>
+          <div className="space-y-2">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto]">
+              Phone Temperature Checker
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Monitor your device health in real-time
+            </p>
+          </div>
         </div>
 
         {/* Input Card */}
-        <Card className="p-6 space-y-4 border-2 shadow-lg">
+        <Card className="p-6 space-y-4 border-2 shadow-2xl backdrop-blur-sm bg-card/80 hover:shadow-primary/10 transition-shadow duration-500">
           <div className="space-y-4">
             <div className="text-center">
               <Button
                 onClick={handleAutoDetect}
                 size="lg"
-                className="w-full h-14 font-semibold text-base"
+                className="w-full h-14 font-semibold text-base relative overflow-hidden group shadow-lg hover:shadow-xl transition-all duration-300"
                 disabled={isDetecting}
               >
-                <Zap className="mr-2 h-5 w-5" />
-                {isDetecting ? "Detecting..." : "Auto-Detect Temperature"}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-shimmer opacity-0 group-hover:opacity-20 transition-opacity" />
+                <Zap className={`mr-2 h-5 w-5 ${isDetecting ? 'animate-pulse' : 'group-hover:scale-110 transition-transform'}`} />
+                <span className="relative z-10">
+                  {isDetecting ? "Detecting..." : "Auto-Detect Temperature"}
+                </span>
               </Button>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-muted-foreground mt-2 flex items-center justify-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                 Automatically detect battery temperature
               </p>
             </div>
@@ -360,27 +381,57 @@ export default function TemperatureChecker() {
         {/* Status Card */}
         {status !== "none" && statusInfo && (
           <Card
-            className="p-6 border-2 shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+            className="p-6 border-2 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 backdrop-blur-sm relative overflow-hidden"
             style={{
               borderColor: statusInfo.color,
-              background: `linear-gradient(to bottom, ${statusInfo.bgColor}, hsl(var(--card)))`,
+              background: `linear-gradient(135deg, ${statusInfo.bgColor}, hsl(var(--card)))`,
+              boxShadow: `0 0 40px ${statusInfo.color}40, 0 20px 40px rgba(0,0,0,0.1)`,
             }}
           >
-            <div className="space-y-4">
+            {/* Animated gradient overlay */}
+            <div 
+              className="absolute inset-0 opacity-10 animate-gradient-shift bg-gradient-to-r from-transparent via-white to-transparent bg-[length:200%_100%]"
+            />
+            <div className="space-y-4 relative z-10">
               {/* Temperature Display */}
-              <div className="text-center pb-4 border-b border-border">
-                <div
-                  className="text-6xl font-bold mb-2 bg-clip-text text-transparent"
-                  style={{ backgroundImage: statusInfo.gradient }}
-                >
-                  {temperature}°C
+              <div className="text-center pb-6 border-b border-border/50">
+                <div className="mb-4 flex justify-center">
+                  <div className="relative">
+                    <div 
+                      className="absolute inset-0 rounded-full blur-2xl animate-pulse-glow"
+                      style={{ backgroundColor: statusInfo.color, opacity: 0.3 }}
+                    />
+                    <div
+                      className="relative text-7xl font-bold mb-2 bg-clip-text text-transparent drop-shadow-2xl animate-pulse-glow"
+                      style={{ backgroundImage: statusInfo.gradient }}
+                    >
+                      {temperature}°C
+                    </div>
+                  </div>
                 </div>
+                
+                {/* Temperature progress bar */}
+                <div className="w-full h-3 bg-muted/30 rounded-full overflow-hidden mb-3 backdrop-blur-sm">
+                  <div
+                    className="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                    style={{
+                      width: `${Math.min((parseFloat(temperature) / 60) * 100, 100)}%`,
+                      background: statusInfo.gradient,
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer bg-[length:200%_100%]" />
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-center gap-2">
                   <div
                     className="h-3 w-3 rounded-full animate-pulse"
-                    style={{ backgroundColor: statusInfo.color }}
+                    style={{ 
+                      backgroundColor: statusInfo.color,
+                      boxShadow: `0 0 0 4px ${statusInfo.color}30`
+                    }}
                   />
-                  <p className="text-lg font-semibold" style={{ color: statusInfo.color }}>
+                  <p className="text-xl font-bold" style={{ color: statusInfo.color }}>
                     {statusInfo.message}
                   </p>
                 </div>
@@ -395,22 +446,32 @@ export default function TemperatureChecker() {
                   {statusInfo.suggestions.map((suggestion, index) => (
                     <div
                       key={index}
-                      className="flex gap-3 p-3 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-border transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+                      className="group flex gap-3 p-4 rounded-xl bg-background/70 backdrop-blur-sm border border-border/50 hover:border-border hover:shadow-lg hover:scale-[1.02] transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 cursor-pointer relative overflow-hidden"
                       style={{
                         animationDelay: `${index * 100}ms`,
                         animationFillMode: 'backwards'
                       }}
                     >
+                      {/* Hover gradient effect */}
+                      <div 
+                        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                        style={{ background: statusInfo.gradient }}
+                      />
+                      
                       <div
-                        className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                        className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 relative"
                         style={{ backgroundColor: statusInfo.bgColor }}
                       >
-                        <div style={{ color: statusInfo.color }}>
+                        <div 
+                          className="absolute inset-0 rounded-full blur-md opacity-50 group-hover:opacity-100 transition-opacity"
+                          style={{ backgroundColor: statusInfo.color }}
+                        />
+                        <div className="relative" style={{ color: statusInfo.color }}>
                           {suggestion.icon}
                         </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-semibold text-foreground mb-1">
+                      <div className="flex-1 min-w-0 relative z-10">
+                        <h4 className="text-sm font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
                           {suggestion.title}
                         </h4>
                         <p className="text-xs text-muted-foreground leading-relaxed">
