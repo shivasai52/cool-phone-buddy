@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Thermometer, Zap } from "lucide-react";
+import { Thermometer, Zap, X, Sun, Smartphone, Battery, Wind, Moon, Wifi, Gamepad2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -7,9 +7,15 @@ import { toast } from "@/hooks/use-toast";
 
 type TempStatus = "normal" | "warm" | "hot" | "dangerous" | "none";
 
+interface Suggestion {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
 interface StatusInfo {
   message: string;
-  suggestions: string;
+  suggestions: Suggestion[];
   emoji: string;
   color: string;
   bgColor: string;
@@ -20,7 +26,23 @@ const getStatusInfo = (temp: number): StatusInfo => {
   if (temp <= 34) {
     return {
       message: "✅ Your phone temperature is perfect",
-      suggestions: "Your device is running at an optimal temperature. Keep up the good usage habits!",
+      suggestions: [
+        {
+          icon: <Thermometer className="w-5 h-5" />,
+          title: "Optimal Temperature",
+          description: "Your device is running perfectly. Continue your current usage habits!"
+        },
+        {
+          icon: <Battery className="w-5 h-5" />,
+          title: "Battery Health",
+          description: "Great conditions for battery longevity and performance."
+        },
+        {
+          icon: <Smartphone className="w-5 h-5" />,
+          title: "Safe to Use",
+          description: "All apps and features are safe to use without concerns."
+        }
+      ],
       emoji: "😊",
       color: "hsl(var(--temp-normal))",
       bgColor: "hsl(var(--temp-normal-bg))",
@@ -29,7 +51,33 @@ const getStatusInfo = (temp: number): StatusInfo => {
   } else if (temp >= 35 && temp <= 44) {
     return {
       message: "⚠️ Your phone is getting warm",
-      suggestions: "Try closing background apps, lower screen brightness, and avoid direct sunlight.",
+      suggestions: [
+        {
+          icon: <X className="w-5 h-5" />,
+          title: "Close Background Apps",
+          description: "Swipe up and close unused apps running in the background."
+        },
+        {
+          icon: <Sun className="w-5 h-5" />,
+          title: "Reduce Brightness",
+          description: "Lower screen brightness to 50% or enable auto-brightness."
+        },
+        {
+          icon: <Wind className="w-5 h-5" />,
+          title: "Improve Ventilation",
+          description: "Remove phone case and avoid direct sunlight or hot surfaces."
+        },
+        {
+          icon: <Wifi className="w-5 h-5" />,
+          title: "Disable Unused Features",
+          description: "Turn off Bluetooth, GPS, and mobile data when not needed."
+        },
+        {
+          icon: <Moon className="w-5 h-5" />,
+          title: "Take a Break",
+          description: "Let your phone rest for 10-15 minutes to cool down naturally."
+        }
+      ],
       emoji: "😰",
       color: "hsl(var(--temp-warm))",
       bgColor: "hsl(var(--temp-warm-bg))",
@@ -38,7 +86,38 @@ const getStatusInfo = (temp: number): StatusInfo => {
   } else if (temp >= 45 && temp <= 54) {
     return {
       message: "🚨 Your phone is overheating!",
-      suggestions: "Stop charging immediately, close heavy apps, turn off mobile data, and let it cool down in a cooler environment.",
+      suggestions: [
+        {
+          icon: <Battery className="w-5 h-5" />,
+          title: "Stop Charging NOW",
+          description: "Immediately unplug your phone from the charger."
+        },
+        {
+          icon: <Gamepad2 className="w-5 h-5" />,
+          title: "Close Heavy Apps",
+          description: "Exit games, video streaming, and camera apps immediately."
+        },
+        {
+          icon: <Wifi className="w-5 h-5" />,
+          title: "Enable Airplane Mode",
+          description: "Turn on airplane mode to reduce processor load."
+        },
+        {
+          icon: <Wind className="w-5 h-5" />,
+          title: "Cool Environment",
+          description: "Move to a cooler location, remove case, place on cool surface."
+        },
+        {
+          icon: <Moon className="w-5 h-5" />,
+          title: "Power Off Temporarily",
+          description: "Consider turning off your phone for 15-20 minutes."
+        },
+        {
+          icon: <AlertTriangle className="w-5 h-5" />,
+          title: "Avoid Using",
+          description: "Do not use your phone until temperature drops below 40°C."
+        }
+      ],
       emoji: "🔥",
       color: "hsl(var(--temp-hot))",
       bgColor: "hsl(var(--temp-hot-bg))",
@@ -47,7 +126,38 @@ const getStatusInfo = (temp: number): StatusInfo => {
   } else {
     return {
       message: "☠️ Very high temperature! DANGER!",
-      suggestions: "URGENT: Stop charging NOW! Turn off your phone and let it cool down completely. Do not use it until temperature normalizes.",
+      suggestions: [
+        {
+          icon: <AlertTriangle className="w-5 h-5" />,
+          title: "CRITICAL: Stop ALL Activity",
+          description: "Immediately stop using your phone. This is an emergency!"
+        },
+        {
+          icon: <Battery className="w-5 h-5" />,
+          title: "Unplug Immediately",
+          description: "Remove from charger NOW. Do not attempt to charge."
+        },
+        {
+          icon: <Smartphone className="w-5 h-5" />,
+          title: "Power Off Device",
+          description: "Turn off your phone completely and let it rest."
+        },
+        {
+          icon: <Wind className="w-5 h-5" />,
+          title: "Maximum Cooling",
+          description: "Place in cool (NOT cold) environment. Remove all covers."
+        },
+        {
+          icon: <AlertTriangle className="w-5 h-5" />,
+          title: "Serious Risk",
+          description: "Battery damage or fire risk. Do not use until fully cooled."
+        },
+        {
+          icon: <Thermometer className="w-5 h-5" />,
+          title: "Monitor Temperature",
+          description: "Wait at least 30 minutes. Check temperature before using again."
+        }
+      ],
       emoji: "☠️",
       color: "hsl(var(--temp-dangerous))",
       bgColor: "hsl(var(--temp-dangerous-bg))",
@@ -277,11 +387,39 @@ export default function TemperatureChecker() {
               </div>
 
               {/* Suggestions */}
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">💬 Suggestions:</p>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {statusInfo.suggestions}
+              <div className="space-y-3">
+                <p className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  💡 Cooling Tips
                 </p>
+                <div className="grid gap-3">
+                  {statusInfo.suggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="flex gap-3 p-3 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50 hover:border-border transition-all duration-300 animate-in fade-in slide-in-from-bottom-2"
+                      style={{
+                        animationDelay: `${index * 100}ms`,
+                        animationFillMode: 'backwards'
+                      }}
+                    >
+                      <div
+                        className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: statusInfo.bgColor }}
+                      >
+                        <div style={{ color: statusInfo.color }}>
+                          {suggestion.icon}
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-semibold text-foreground mb-1">
+                          {suggestion.title}
+                        </h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {suggestion.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </Card>
