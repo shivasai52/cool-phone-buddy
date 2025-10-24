@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import { useTheme } from "next-themes";
 
 type TempStatus = "normal" | "warm" | "hot" | "dangerous" | "none";
 
@@ -88,6 +89,11 @@ const getStatusInfo = (temp: number): StatusInfo => {
       message: "🚨 Your phone is overheating!",
       suggestions: [
         {
+          icon: <Moon className="w-5 h-5" />,
+          title: "🌙 Switch to Dark Mode",
+          description: "Dark Mode reduces screen power consumption and heat generation significantly."
+        },
+        {
           icon: <Battery className="w-5 h-5" />,
           title: "Stop Charging NOW",
           description: "Immediately unplug your phone from the charger."
@@ -127,6 +133,11 @@ const getStatusInfo = (temp: number): StatusInfo => {
     return {
       message: "☠️ Very high temperature! DANGER!",
       suggestions: [
+        {
+          icon: <Moon className="w-5 h-5" />,
+          title: "🌙 Enable Dark Mode ASAP",
+          description: "Switch to Dark Mode immediately to reduce power draw and screen heat!"
+        },
         {
           icon: <AlertTriangle className="w-5 h-5" />,
           title: "CRITICAL: Stop ALL Activity",
@@ -172,6 +183,7 @@ export default function TemperatureChecker() {
   const [statusInfo, setStatusInfo] = useState<StatusInfo | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
   const [batterySupported, setBatterySupported] = useState(true);
+  const { theme, setTheme } = useTheme();
 
   const analyzeTemperature = (temp: number) => {
     const info = getStatusInfo(temp);
@@ -183,8 +195,25 @@ export default function TemperatureChecker() {
       setStatus("warm");
     } else if (temp >= 45 && temp <= 54) {
       setStatus("hot");
+      // Auto-suggest dark mode when overheating
+      if (theme !== "dark") {
+        toast({
+          title: "💡 Power Saving Tip",
+          description: "Switch to Dark Mode to reduce screen heat and power consumption!",
+          duration: 5000,
+        });
+      }
     } else {
       setStatus("dangerous");
+      // Auto-suggest dark mode when critically hot
+      if (theme !== "dark") {
+        toast({
+          title: "⚠️ URGENT: Enable Dark Mode!",
+          description: "Dark Mode can help reduce heat by lowering screen power draw. Switch now!",
+          variant: "destructive",
+          duration: 8000,
+        });
+      }
     }
   };
 
