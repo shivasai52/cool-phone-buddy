@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
+import logo from "@/assets/phone-temp-logo.png";
 
 type TempStatus = "normal" | "warm" | "hot" | "dangerous" | "none";
 
@@ -310,11 +311,12 @@ export default function TemperatureChecker() {
         <div className="text-center space-y-4">
           <div className="flex justify-center mb-4">
             <div className="relative animate-float">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse-glow" />
-              <div className="relative bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-2xl border-2 border-primary/20">
-                <Thermometer 
-                  className="w-16 h-16 text-primary drop-shadow-lg" 
-                  strokeWidth={1.5} 
+              <div className="absolute inset-0 bg-primary/20 rounded-3xl blur-2xl animate-pulse-glow" />
+              <div className="relative bg-gradient-to-br from-card via-card to-primary/5 p-4 rounded-3xl border-2 border-primary/30 shadow-2xl backdrop-blur-sm">
+                <img 
+                  src={logo} 
+                  alt="Phone Temperature Checker Logo" 
+                  className="w-24 h-24 object-contain drop-shadow-2xl"
                 />
                 {status !== "none" && (
                   <div
